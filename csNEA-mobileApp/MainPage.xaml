@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="csNEA_mobileApp.MainPage">
+
+    <ContentPage x:Name="attendancePage" Title="Attendance" IconImageSource="baseline_assignment_black_36dp.png">
+        <ContentPage.Content>
+            <StackLayout>
+                <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="4">
+                    <Label x:Name="frameMsg" HorizontalTextAlignment="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+                </Frame>
+                <Label Text="Want to check for attendances?" FontSize="18" Padding="30,10,30,10" />
+                <Label Text="Press the button that corresponds to the current period to take attendances:" FontSize="16" Padding="30,0,30,0" />
+                <Button Text="Period 1" />
+                <Button Text="Period 2" />
+                <Button Text="Period 3" />
+                <Button Text="Period 4" />
+                <Button Text="Period 5" />
+                <Button Text="Period 6" />
+                <Button Text="Period 7" />
+            </StackLayout>
+        </ContentPage.Content>
+    </ContentPage>
+    <ContentPage Title="Feed" IconImageSource="baseline_view_day_black_36dp.png">
+        <Label Text="TODO" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+    </ContentPage>
+    <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png">
+        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Change Password:" FontSize="20" />
+            <Entry x:Name="entCurrentPasswd" Placeholder="Current Password" IsPassword="True" />
+            <Entry x:Name="entNewPasswd" Placeholder="New Password" IsPassword="True" />
+            <Entry x:Name="entConfirmPasswd" Placeholder="Confirm New Password" IsPassword="True" />
+            <Button Text="Submit Changes" Clicked="BtnChangePasswd_Clicked" />
+            <Label HorizontalOptions="Center" Text="To Log Out altogether, press the button below:" FontSize="18" />
+            <Button TextColor="Red" Text="Log Out" Clicked="BtnLogOut_Clicked" />
+        </StackLayout>
+    </ContentPage>
+</TabbedPage>
