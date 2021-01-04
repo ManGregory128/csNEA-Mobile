@@ -22,7 +22,7 @@
         </ContentPage.Content>
     </ContentPage>
     <ContentPage Title="Feed" IconImageSource="baseline_view_day_black_36dp.png">
-        <Label Text="TODO" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" />
+        <ListView x:Name="lstFeed" />
     </ContentPage>
     <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png">
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">

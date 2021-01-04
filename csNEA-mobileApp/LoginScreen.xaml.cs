@@ -25,14 +25,13 @@ namespace csNEA_mobileApp
         {
             bool success = false;
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "192.168.0.30";
+            builder.DataSource = entAddress.Text;
             builder.UserID = "SA";
-            builder.Password = "CYrulis2002";
+            builder.Password = "]JKfpLZSp=8Qd*NM";
             builder.InitialCatalog = "attendanceDB";
-
+            MainPage.SetDBinfo(entAddress.Text);
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-
                 String sql = "SELECT UserName, UserPassword, FirstName FROM dbo.Users WHERE UserRole='t';"; //Selecting Teachers Only
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
@@ -56,8 +55,22 @@ namespace csNEA_mobileApp
                 {
                     success = true;
                     Settings.CurrentUsername = listOfUsers[i].username;
+                    Settings.CurrentPassword = listOfUsers[i].password;
+
+                    String sql = "UPDATE dbo.Users SET IsLoggedIn = 1 WHERE UserName = '" + listOfUsers[i].username + "';";
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                    }
+                    
                     listOfUsers.Clear();
                     Settings.FirstRun = false;
+                    break;
                 }
             }
             if (success == false)
@@ -82,5 +95,9 @@ namespace csNEA_mobileApp
         {
             await DisplayAlert("Alert", "The Username and/or Password are incorrect.", "OK");
         }
+    }
+    public class User
+    {
+        public string username, password, firstName;
     }
 }
