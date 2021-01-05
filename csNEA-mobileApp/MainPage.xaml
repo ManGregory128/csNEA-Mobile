@@ -22,7 +22,26 @@
         </ContentPage.Content>
     </ContentPage>
     <ContentPage Title="Feed" IconImageSource="baseline_view_day_black_36dp.png">
-        <ListView x:Name="lstFeed" />
+        <ListView x:Name="lstFeed"
+                  ItemsSource="{Binding Path=BindingContext.posts}"
+                  IsVisible="True"
+                  HasUnevenRows="True"
+                  SeparatorColor ="Aqua"
+                  IsPullToRefreshEnabled="True"
+                  RefreshCommand="{Binding RefreshCommand}"
+                  IsRefreshing="{Binding IsRefreshing}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Vertical">
+                            <Label Text="{Binding User}" FontSize="Title"></Label>
+                            <Label Text="{Binding DatePosted}" FontSize="Subtitle"></Label>
+                            <Label Text="{Binding PostText}" FontSize="Body"></Label>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </ContentPage>
     <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png">
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">

@@ -29,7 +29,8 @@ namespace csNEA_mobileApp
             builder.UserID = "SA";
             builder.Password = "]JKfpLZSp=8Qd*NM";
             builder.InitialCatalog = "attendanceDB";
-            MainPage.SetDBinfo(entAddress.Text);
+            Settings.CurrentDatabase = entAddress.Text;
+            MainPage.SetDBinfo();
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
                 String sql = "SELECT UserName, UserPassword, FirstName FROM dbo.Users WHERE UserRole='t';"; //Selecting Teachers Only

@@ -7,7 +7,7 @@ using Xamarin.Essentials;
 namespace csNEA_mobileApp
 {
     class Settings
-    {
+    {        
         public static bool FirstRun
         {
             get => Preferences.Get(nameof(FirstRun), true);
@@ -25,7 +25,11 @@ namespace csNEA_mobileApp
             set => Preferences.Set(nameof(CurrentPassword), value);
         }
 
-        public static SqlConnectionStringBuilder builder { get; set; }
+        public static string CurrentDatabase
+        {
+            get => Preferences.Get(nameof(CurrentDatabase), null);
+            set => Preferences.Set(nameof(CurrentDatabase), value);
+        }
 
         public Settings()
         {

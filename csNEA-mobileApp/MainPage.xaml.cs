@@ -1,17 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace csNEA_mobileApp
 {
     public partial class MainPage : TabbedPage
     {
-        
+        public ObservableCollection<FeedPost> posts { get; set; }
+        public static SqlConnectionStringBuilder builder { get; set; }
+        private bool _isRefreshing = false;
+        public bool IsRefreshing
+        {
+            get { return _isRefreshing; }
+            set
+            {
+                _isRefreshing = value;
+                OnPropertyChanged(nameof(IsRefreshing));
+            }
+        }
+        public ICommand RefreshCommand
+        {
+            get
+            {
+                return new Command(() =>
+                {
+                    IsRefreshing = true;
+
+                    UpdateFeed();
+
+                    IsRefreshing = false;
+                });
+            }
+        }
         public MainPage()
         {
             InitializeComponent();
@@ -23,18 +50,20 @@ namespace csNEA_mobileApp
             }
             else
             {
+                SetDBinfo();
                 UpdateFrame();
+                UpdateFeed();
             }
-                                                
+
             //DateTime localDate = DateTime.Now;
-            //BindingContext = new InitializationClass();
+            this.BindingContext = this;
         }
 
-        public static void SetDBinfo(string input)
+        public static void SetDBinfo()
         {
-            Settings.builder = new SqlConnectionStringBuilder
+            builder = new SqlConnectionStringBuilder
             {
-                DataSource = input,
+                DataSource = Settings.CurrentDatabase,
                 UserID = "SA",
                 Password = "]JKfpLZSp=8Qd*NM",
                 InitialCatalog = "attendanceDB"
@@ -43,7 +72,30 @@ namespace csNEA_mobileApp
 
         private void UpdateFeed()
         {
-            
+            posts = new ObservableCollection<FeedPost>();
+            posts.Clear();
+            FeedPost tempPost;
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                String sql = "SELECT Author, DateTimePosted, Post FROM dbo.Feed;"; //Selecting Only from last week TODO
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            //Assigning Posts to the List
+                            tempPost = new FeedPost(reader.GetString(2), reader.GetString(0), reader.GetDateTime(1));
+                            posts.Add(tempPost);
+                        }
+                        reader.Close();
+                    }
+                    connection.Close();
+                }
+                lstFeed.ItemsSource = posts;
+            }            
         }
 
         public void UpdateFrame()
@@ -57,7 +109,7 @@ namespace csNEA_mobileApp
             {
                 if (entNewPasswd.Text == entConfirmPasswd.Text)
                 {
-                    using (SqlConnection connection = new SqlConnection(Settings.builder.ConnectionString))
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                     {
                         String sql = "UPDATE Users SET UserPassword='" + entConfirmPasswd.Text + "' WHERE UserName='" + Settings.CurrentUsername + "';";
 
@@ -91,7 +143,7 @@ namespace csNEA_mobileApp
             if (answer == true)
             {
                 String sql = "UPDATE dbo.Users SET IsLoggedIn = 0 WHERE UserName = '" + Settings.CurrentUsername + "';";
-                using (SqlConnection connection = new SqlConnection(Settings.builder.ConnectionString))
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                 {
                     using (SqlCommand command = new SqlCommand(sql, connection))
                     {
