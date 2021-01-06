@@ -52,9 +52,9 @@ namespace csNEA_mobileApp
             {
                 SetDBinfo();
                 UpdateFrame();
-                UpdateFeed();
+                UpdateFeed();                
             }
-
+            UpdatePeriods();
             //DateTime localDate = DateTime.Now;
             this.BindingContext = this;
         }
@@ -96,6 +96,16 @@ namespace csNEA_mobileApp
                 }
                 lstFeed.ItemsSource = posts;
             }            
+        }
+
+        private void UpdatePeriods()
+        {
+            List<string> periods = new List<string>();
+            for (int i = 1; i <= 7; i++)
+            {
+                periods.Add("Period " + i);
+            }            
+            pickerGroup.ItemsSource = periods;
         }
 
         public void UpdateFrame()
@@ -159,6 +169,14 @@ namespace csNEA_mobileApp
             }
             else
                 await DisplayAlert("Alert", "You have chosen not to log out.", "OK");
+        }
+        async void BtnTakeAttendance_Clicked(object sender, EventArgs e)
+        {
+            int groupSelected;
+            groupSelected = pickerGroup.SelectedIndex + 1;
+            AttendancePage.PeriodPicked = groupSelected;
+            AttendancePage attendancePage = new AttendancePage();
+            await this.Navigation.PushModalAsync(attendancePage);
         }
     }
 }
