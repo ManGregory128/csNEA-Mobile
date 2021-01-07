@@ -17,41 +17,71 @@ namespace csNEA_mobileApp
         public static int PeriodPicked { get; set; }
         public ObservableCollection<Student> Students { get; set; }
         public static SqlConnectionStringBuilder builder { get; set; }
-
+        public static bool updateRegister { get; set; }
+        public string group { get; set; }
         public AttendancePage()
         {
             Students = new ObservableCollection<Student>();
             InitializeComponent();
             SetDBinfo();
             int day = GetToday();
-            string group = GetTeachingGroup(PeriodPicked, day);
-
+            group = GetTeachingGroup(PeriodPicked, day);
+            Students.Clear();
             if (group != "")
             {
-                Students.Clear();
-                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                updateRegister = CheckInAbsences(group);
+                DateTime today = DateTime.Now;
+                if (updateRegister)
                 {
-                    String sql = "SELECT StudentID, FirstName, LastName FROM dbo.Students WHERE StudentGroup='" + group + "';";
-
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    Students.Clear();
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                     {
-                        connection.Open();
-                        using (SqlDataReader reader = command.ExecuteReader())
+                        String sql = "SELECT Attendances.StudentID, Attendances.IsPresent, Students.FirstName, Students.LastName FROM Attendances INNER JOIN Students ON Attendances.StudentID = Students.StudentID WHERE StudentGroup='" + group + "' AND Date = '" + today.ToString("yyyy-MM-dd") + "' AND Period = " + PeriodPicked + ";";
+
+                        using (SqlCommand command = new SqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            connection.Open();
+                            using (SqlDataReader reader = command.ExecuteReader())
                             {
-                                Student tempStudent = new Student(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), false);
-                                Students.Add(tempStudent);
+                                while (reader.Read())
+                                {
+                                    Student tempStudent = new Student(reader.GetInt32(0), reader.GetString(2), reader.GetString(3), reader.GetBoolean(1));
+                                    Students.Add(tempStudent);
+                                }
+                                reader.Close();
                             }
-                            reader.Close();
+                            connection.Close();
                         }
-                        connection.Close();
                     }
                 }
+                else
+                {
+                    Students.Clear();
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                    {
+                        String sql = "SELECT StudentID, FirstName, LastName FROM dbo.Students WHERE StudentGroup='" + group + "';";
+
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            connection.Open();
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    Student tempStudent = new Student(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), false);
+                                    Students.Add(tempStudent);
+                                }
+                                reader.Close();
+                            }
+                            connection.Close();
+                        }
+                    }
+                }                
             }
             else
             {
-                DisplayAlert("Alert", "You do not have a lesson with a group right now.", "OK");
+                Students.Clear();
+                DisplayAlert("Alert", "You do not have a lesson with a group right now.", "OK");                
             }
             this.BindingContext = this;
             lstStudents.ItemsSource = Students;
@@ -64,7 +94,52 @@ namespace csNEA_mobileApp
 
         private void btnSubmit_Clicked(object sender, EventArgs e)
         {
-            //send to Attendance Table
+            DateTime today = DateTime.Now;
+            String sql;
+            if (updateRegister)
+            {
+                for (int i = 0; i < Students.Count; i++)
+                {
+                    int temp;
+                    if (Students[i].IsPresent)
+                        temp = 1;
+                    else
+                        temp = 0;
+                    sql = "UPDATE dbo.Attendances SET IsPresent = " + temp + " WHERE Date = '" + today.ToString("yyyy-MM-dd") + "' AND Period = " + PeriodPicked + " AND StudentID = " + Students[i].StudentID + " AND MemberOf = '" + group + "';";
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Students.Count; i++)
+                {
+                    int temp;
+                    if (Students[i].IsPresent)
+                        temp = 1;
+                    else
+                        temp = 0;
+                    sql = "INSERT INTO dbo.Attendances (Date, Period, StudentID, MemberOf, IsPresent) " +
+                        "Values ('" + today.ToString("yyyy-MM-dd") + "', " + PeriodPicked + ", " + Students[i].StudentID + ", '"+ group +"', " + temp +");";
+                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        {
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+                    }
+                }
+            }
+            this.Navigation.PopModalAsync();
         }
         public static void SetDBinfo()
         {
@@ -125,6 +200,31 @@ namespace csNEA_mobileApp
                 }
             }
             return output;
+        }
+        private bool CheckInAbsences(string group)
+        {
+            DateTime today = DateTime.Now;
+            int records;
+            String sql = "SELECT COUNT(1) FROM dbo.Attendances WHERE MemberOf = '" + group + "' AND Date = '" + today.ToString("yyyy-MM-dd") + "' AND Period = " + PeriodPicked + ";";
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    records = (int)command.ExecuteScalar();
+                    connection.Close();
+                }
+            }
+            if (records > 0)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+        private void GetFromAbsences()
+        {
+
         }
     }
 }

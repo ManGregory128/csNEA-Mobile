@@ -9,10 +9,10 @@
                 <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="4">
                     <Label x:Name="frameMsg" HorizontalTextAlignment="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
                 </Frame>
-                <Label Text="Want to check for attendances?" FontSize="18" Padding="30,10,30,10" />
-                <Label Text="Press the button that corresponds to the current period to take attendances:" FontSize="16" Padding="30,0,30,0" />
+                <Label Text="Want to fill in the register?" FontSize="18" Padding="30,10,30,10" />
+                <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" Padding="30,0,30,0" />
                 <Picker x:Name="pickerGroup" Title="Select a Period" />
-                <Button x:Name="btnTakeAttendance" Text="Take Attendance" Clicked="BtnTakeAttendance_Clicked"/>
+                <Button x:Name="btnTakeAttendance" Text="Take Attendance" BorderWidth="1" Clicked="BtnTakeAttendance_Clicked"/>
             </StackLayout>
         </ContentPage.Content>
     </ContentPage>
@@ -25,6 +25,13 @@
                   IsPullToRefreshEnabled="True"
                   RefreshCommand="{Binding RefreshCommand}"
                   IsRefreshing="{Binding IsRefreshing}">
+            <ListView.Header>
+                <StackLayout>
+                    <Frame BackgroundColor="ForestGreen" Padding="24" CornerRadius="4">
+                        <Label Text="Feed" HorizontalOptions="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+                    </Frame>
+                </StackLayout>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>

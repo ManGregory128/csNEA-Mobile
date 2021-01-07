@@ -172,11 +172,37 @@ namespace csNEA_mobileApp
         }
         async void BtnTakeAttendance_Clicked(object sender, EventArgs e)
         {
-            int groupSelected;
-            groupSelected = pickerGroup.SelectedIndex + 1;
-            AttendancePage.PeriodPicked = groupSelected;
-            AttendancePage attendancePage = new AttendancePage();
-            await this.Navigation.PushModalAsync(attendancePage);
+            int periodSelected;
+            periodSelected = pickerGroup.SelectedIndex + 1;
+            if (DateExists())
+            {
+                AttendancePage.PeriodPicked = periodSelected;
+                AttendancePage attendancePage = new AttendancePage();
+                await this.Navigation.PushModalAsync(attendancePage);
+            }
+            else
+                await DisplayAlert("Alert", "There are no lessons for today.", "OK");
+        }
+        private bool DateExists()
+        {
+            DateTime today = DateTime.Now;
+            int day;
+            String sql = "SELECT COUNT(1) FROM dbo.Dates WHERE Date = '" + today.ToString("yyyy-MM-dd") + "';";
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    day = (int) command.ExecuteScalar();
+                    connection.Close();
+                }
+            }
+            if (day > 0)
+            {
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

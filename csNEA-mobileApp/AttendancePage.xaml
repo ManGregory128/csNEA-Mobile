@@ -4,7 +4,7 @@
              xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
              x:Class="csNEA_mobileApp.AttendancePage">
 
-    <ListView x:Name="lstStudents" ItemsSource="{Binding Path=BindingContext.Students}">
+    <ListView x:Name="lstStudents" ItemsSource="{Binding Path=BindingContext.Students}" HorizontalOptions="Center">
         <ListView.Header>
             <StackLayout Orientation="Horizontal">
                 <Button x:Name="btnBack" Text="Go Back" Clicked="BtnBack_Clicked"></Button>
@@ -17,15 +17,15 @@
                         <StackLayout Orientation="Horizontal">
                             <Label Text="{Binding FirstName}" FontSize="13" />
                             <Label Text="{Binding LastName}" FontSize="13"/>
-                            <input:CheckBox Type="Check" IsChecked="{Binding IsPresent}" HorizontalOptions="End"/>
+                            <input:CheckBox Type="Check" IsChecked="{Binding IsPresent}" HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
                     </ViewCell.View>
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
         <ListView.Footer>
-            <StackLayout Orientation="Horizontal">
-                <Button x:Name="btnSubmit" Text="Submit Register" Clicked="btnSubmit_Clicked"></Button>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                <Button x:Name="btnSubmit" Text="Submit Register" BorderWidth="1" Clicked="btnSubmit_Clicked"></Button>
             </StackLayout>
         </ListView.Footer>
     </ListView>
