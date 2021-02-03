@@ -16,6 +16,7 @@ namespace csNEA_mobileApp
         public ObservableCollection<FeedPost> posts { get; set; }
         public static SqlConnectionStringBuilder builder { get; set; }
         private bool _isRefreshing = false;
+        public static List<int> CurrentPeriods { get; set; }
         public bool IsRefreshing
         {
             get { return _isRefreshing; }
@@ -41,32 +42,50 @@ namespace csNEA_mobileApp
         }
         public MainPage()
         {
+            
             InitializeComponent();
             if (Settings.FirstRun == true)
             {
-                LoginScreen modalPage = new LoginScreen();
-                this.Navigation.PushModalAsync(modalPage);
-                frameMsg.Text = "Good morning!";
+                ShowLogin();
+                //frameMsg.Text = "Good morning!";
             }
             else
             {
                 SetDBinfo();
                 UpdateFrame();
-                UpdateFeed();                
-            }
-            UpdatePeriods();
+                try
+                {
+                    UpdateFeed();
+                    UpdatePeriods();
+                }
+                catch
+                {
+                    ShowErrorMessage();
+                }             
+            }            
             //DateTime localDate = DateTime.Now;
             this.BindingContext = this;
         }
-
+        public async void ShowLogin()
+        {
+            LoginScreen modalPage = new LoginScreen();
+            modalPage.Disappearing += (sender2, e2) =>
+            {
+                System.Diagnostics.Debug.WriteLine("The modal page is dismissed");
+                UpdateFrame();
+                UpdateFeed();
+                UpdatePeriods();
+            };
+            await Navigation.PushModalAsync(modalPage);
+        }
         public static void SetDBinfo()
         {
             builder = new SqlConnectionStringBuilder
             {
                 DataSource = Settings.CurrentDatabase,
-                UserID = "SA",
-                Password = "]JKfpLZSp=8Qd*NM",
-                InitialCatalog = "attendanceDB"
+                UserID = "adminDB",
+                Password = Settings.CurrentDBPassword,
+                InitialCatalog = "aradippou5"
             };
         }
 
@@ -77,7 +96,7 @@ namespace csNEA_mobileApp
             FeedPost tempPost;
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                String sql = "SELECT Author, DateTimePosted, Post FROM dbo.Feed;"; //Selecting Only from last week TODO
+                String sql = "SELECT Author, DateTimePosted, Post FROM dbo.Feed ORDER BY DateTimePosted DESC;"; //Selecting Only from last week TODO
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -100,12 +119,53 @@ namespace csNEA_mobileApp
 
         private void UpdatePeriods()
         {
+            CurrentPeriods = new List<int>();
+            int day = GetToday();
             List<string> periods = new List<string>();
-            for (int i = 1; i <= 7; i++)
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                periods.Add("Period " + i);
+                String sql = "SELECT Teachings.PeriodID, Teachings.LessonID, Lessons.LessonName FROM dbo.Teachings " +
+                    "INNER JOIN dbo.Lessons ON Teachings.LessonID = Lessons.LessonID WHERE TeacherUsername = '" + Settings.CurrentUsername + "' AND Day = " + day + ";";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            periods.Add("Period " + reader.GetByte(0).ToString() + " - " + reader.GetString(2));
+                            //CurrentPeriods.Add(reader.GetInt32(0));
+                        }
+                        reader.Close();
+                    }
+                    connection.Close();
+                }                
             }            
             pickerGroup.ItemsSource = periods;
+        }
+        private int GetToday()
+        {
+            DateTime today = DateTime.Now;
+            string day = today.DayOfWeek.ToString();
+
+            switch (day)
+            {
+                case "Monday":
+                    return 1;
+                case "Tuesday":
+                    return 2;
+                case "Wednesday":
+                    return 3;
+                case "Thursday":
+                    return 4;
+                case "Friday":
+                    return 5;
+                case "Saturday":
+                    return 6;
+                default:
+                    return 7;
+            }
         }
 
         public void UpdateFrame()
@@ -115,7 +175,9 @@ namespace csNEA_mobileApp
 
         async void BtnChangePasswd_Clicked(object sender, EventArgs e)
         {
-            if (Settings.CurrentPassword == entCurrentPasswd.Text)
+            string currentPassword = GetPasswordCurrent();
+
+            if (currentPassword == entCurrentPasswd.Text)
             {
                 if (entNewPasswd.Text == entConfirmPasswd.Text)
                 {
@@ -129,8 +191,7 @@ namespace csNEA_mobileApp
                             command.ExecuteNonQuery();
                             connection.Close();
                         }
-                    }
-                    Settings.CurrentPassword = entConfirmPasswd.Text;
+                    }                    
                     await DisplayAlert("Success", "Password has been saved.", "OK");
                     entCurrentPasswd.Text = "";
                     entNewPasswd.Text = "";
@@ -164,8 +225,8 @@ namespace csNEA_mobileApp
                 }
                 await DisplayAlert("Alert", "You have logged out. Restart of application is recommended.", "OK");
                 Settings.FirstRun = true;
-                LoginScreen modalPage = new LoginScreen();
-                await this.Navigation.PushModalAsync(modalPage);
+                
+                ShowLogin();
             }
             else
                 await DisplayAlert("Alert", "You have chosen not to log out.", "OK");
@@ -203,6 +264,33 @@ namespace csNEA_mobileApp
             }
             else
                 return false;
+        }
+        private string GetPasswordCurrent()
+        {
+            string password = "";
+            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            {
+                String sql = "SELECT UserPassword FROM dbo.Users WHERE UserName = '" + Settings.CurrentUsername +"';";
+
+                using (SqlCommand command = new SqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            password = reader.GetString(0);
+                        }
+                        reader.Close();
+                    }
+                    connection.Close();
+                }                
+            }
+            return password;
+        }
+        async void ShowErrorMessage()
+        {
+            await DisplayAlert("Alert", "Cannot contact the database. Make sure you are connected to a network.", "OK");
         }
     }
 }

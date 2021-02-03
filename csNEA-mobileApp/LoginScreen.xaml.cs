@@ -19,6 +19,11 @@ namespace csNEA_mobileApp
         public LoginScreen()
         {           
             InitializeComponent();
+            if (Settings.CurrentDatabase != String.Empty)
+            {
+                entAddress.Text = Settings.CurrentDatabase;
+                entDBPass.Text = Settings.CurrentDBPassword;
+            }
         }
 
         private void Button_Clicked(object sender, EventArgs e)
@@ -26,61 +31,68 @@ namespace csNEA_mobileApp
             bool success = false;
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = entAddress.Text;
-            builder.UserID = "SA";
-            builder.Password = "]JKfpLZSp=8Qd*NM";
-            builder.InitialCatalog = "attendanceDB";
+            builder.UserID = "adminDB";
+            builder.Password = entDBPass.Text;
+            builder.InitialCatalog = "aradippou5";
+
             Settings.CurrentDatabase = entAddress.Text;
-            MainPage.SetDBinfo();
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+            Settings.CurrentDBPassword = entDBPass.Text;
+            try
             {
-                String sql = "SELECT UserName, UserPassword, FirstName FROM dbo.Users WHERE UserRole='t';"; //Selecting Teachers Only
-
-                using (SqlCommand command = new SqlCommand(sql, connection))
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                 {
-                    connection.Open();
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    String sql = "SELECT UserName, UserPassword, FirstName FROM dbo.Users WHERE UserRole='t';"; //Selecting Teachers Only
+
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        connection.Open();
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            //Console.WriteLine("{0} {1}", reader.GetString(0), reader.GetString(1));
-                            AddUser(reader.GetString(0), reader.GetString(1), reader.GetString(2));
+                            while (reader.Read())
+                            {
+                                AddUser(reader.GetString(0), reader.GetString(1), reader.GetString(2));
+                            }
+                            reader.Close();
                         }
-                        reader.Close();
+                        connection.Close();
                     }
-                    connection.Close();
                 }
-            }
-            for (int i = 0; i < listOfUsers.Count; i++)
-            {
-                if (entUserName.Text == listOfUsers[i].username && entPasswd.Text == listOfUsers[i].password)
+                for (int i = 0; i < listOfUsers.Count; i++)
                 {
-                    success = true;
-                    Settings.CurrentUsername = listOfUsers[i].username;
-                    Settings.CurrentPassword = listOfUsers[i].password;
-
-                    String sql = "UPDATE dbo.Users SET IsLoggedIn = 1 WHERE UserName = '" + listOfUsers[i].username + "';";
-                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                    if (entUserName.Text == listOfUsers[i].username && entPasswd.Text == listOfUsers[i].password)
                     {
-                        using (SqlCommand command = new SqlCommand(sql, connection))
+                        success = true;
+                        Settings.CurrentUsername = listOfUsers[i].username;
+                        MainPage.SetDBinfo();
+                        String sql = "UPDATE dbo.Users SET IsLoggedIn = 1 WHERE UserName = '" + listOfUsers[i].username + "';";
+                        using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                         {
-                            connection.Open();
-                            command.ExecuteNonQuery();
-                            connection.Close();
+                            using (SqlCommand command = new SqlCommand(sql, connection))
+                            {
+                                connection.Open();
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
                         }
+
+                        listOfUsers.Clear();
+                        Settings.FirstRun = false;
+                        break;
                     }
-                    
+                }
+                if (success == false)
+                {
+                    ShowMessage(1);
                     listOfUsers.Clear();
-                    Settings.FirstRun = false;
-                    break;
                 }
+                else
+                    this.Navigation.PopModalAsync();
             }
-            if (success == false)
+            catch
             {
-                ShowMessage();
-                listOfUsers.Clear();
+                ShowMessage(2);
             }
-            else
-                this.Navigation.PopModalAsync();
+            
         }
         private void AddUser(string username, string password, string firstName)
         {
@@ -92,9 +104,12 @@ namespace csNEA_mobileApp
             };
             listOfUsers.Add(tempUser);
         }
-        async void ShowMessage()
+        async void ShowMessage(int reason)
         {
-            await DisplayAlert("Alert", "The Username and/or Password are incorrect.", "OK");
+            if (reason == 1) //the database info is correct but user does not exist or username and/or password is incorrect
+                await DisplayAlert("Alert", "The Username and/or Password are incorrect.", "OK");
+            else //the database could not be reached in the first place
+                await DisplayAlert("Alert", "Could not contact the Database.", "OK");
         }
     }
     public class User

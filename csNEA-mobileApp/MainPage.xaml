@@ -47,6 +47,9 @@
     </ContentPage>
     <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png">
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+            <Frame BackgroundColor="Orange" Padding="24" CornerRadius="4">
+                <Label Text="Settings" HorizontalOptions="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+            </Frame>
             <Label Text="Change Password:" FontSize="20" />
             <Entry x:Name="entCurrentPasswd" Placeholder="Current Password" IsPassword="True" />
             <Entry x:Name="entNewPasswd" Placeholder="New Password" IsPassword="True" />

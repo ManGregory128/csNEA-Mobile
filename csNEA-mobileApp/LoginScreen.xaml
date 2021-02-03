@@ -8,6 +8,7 @@
             <Entry x:Name="entUserName" Placeholder="Username" />
             <Entry x:Name="entPasswd" Placeholder="Password" IsPassword="True" />
             <Entry x:Name="entAddress" Placeholder="Database Address" />
+            <Entry x:Name="entDBPass" Placeholder="Database Password" />
             <Button Text="Log In" Clicked="Button_Clicked"/>
         </StackLayout>
     </ContentPage.Content>

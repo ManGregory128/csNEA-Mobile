@@ -36,7 +36,9 @@ namespace csNEA_mobileApp
                     Students.Clear();
                     using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
                     {
-                        String sql = "SELECT Attendances.StudentID, Attendances.IsPresent, Students.FirstName, Students.LastName FROM Attendances INNER JOIN Students ON Attendances.StudentID = Students.StudentID WHERE StudentGroup='" + group + "' AND Date = '" + today.ToString("yyyy-MM-dd") + "' AND Period = " + PeriodPicked + ";";
+                        String sql = "SELECT Attendances.StudentID, Attendances.IsPresent, Students.FirstName, Students.LastName " +
+                            "FROM Attendances INNER JOIN Students ON Attendances.StudentID = Students.StudentID " +
+                            "WHERE StudentGroup='" + group + "' AND Date = '" + today.ToString("yyyy-MM-dd") + "' AND Period = " + PeriodPicked + ";";
 
                         using (SqlCommand command = new SqlCommand(sql, connection))
                         {
@@ -146,9 +148,9 @@ namespace csNEA_mobileApp
             builder = new SqlConnectionStringBuilder
             {
                 DataSource = Settings.CurrentDatabase,
-                UserID = "SA",
-                Password = "]JKfpLZSp=8Qd*NM",
-                InitialCatalog = "attendanceDB"
+                UserID = "adminDB",
+                Password = Settings.CurrentDBPassword,
+                InitialCatalog = "aradippou5"
             };
         }
         private int GetToday()
@@ -222,9 +224,10 @@ namespace csNEA_mobileApp
             else
                 return false;
         }
-        private void GetFromAbsences()
-        {
 
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
         }
     }
 }

@@ -18,17 +18,18 @@ namespace csNEA_mobileApp
         {
             get => Preferences.Get(nameof(CurrentUsername), null);
             set => Preferences.Set(nameof(CurrentUsername), value);
-        }
-        public static string CurrentPassword
-        {
-            get => Preferences.Get(nameof(CurrentPassword), null);
-            set => Preferences.Set(nameof(CurrentPassword), value);
-        }
+        }       
 
         public static string CurrentDatabase
         {
             get => Preferences.Get(nameof(CurrentDatabase), null);
             set => Preferences.Set(nameof(CurrentDatabase), value);
+        }
+
+        public static string CurrentDBPassword
+        {
+            get => Preferences.Get(nameof(CurrentDBPassword), null);
+            set => Preferences.Set(nameof(CurrentDBPassword), value);
         }
 
         public Settings()
