@@ -17,7 +17,7 @@
                         <StackLayout Orientation="Horizontal">
                             <Label Text="{Binding FirstName}" FontSize="13" />
                             <Label Text="{Binding LastName}" FontSize="13"/>
-                            <input:CheckBox Type="Check" IsChecked="{Binding IsPresent}" HorizontalOptions="EndAndExpand"/>
+                            <input:CheckBox Type="Check" IsChecked="{Binding IsPresent}" HorizontalOptions="EndAndExpand" BorderColor="{AppThemeBinding Dark=White, Light=Black}"/>
                         </StackLayout>
                     </ViewCell.View>
                 </ViewCell>

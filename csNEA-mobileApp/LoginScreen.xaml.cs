@@ -111,6 +111,11 @@ namespace csNEA_mobileApp
             else //the database could not be reached in the first place
                 await DisplayAlert("Alert", "Could not contact the Database.", "OK");
         }
+
+        private void btnDemo_Clicked(object sender, EventArgs e)
+        {
+            this.Navigation.PopModalAsync();
+        }
     }
     public class User
     {

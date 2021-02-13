@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="csNEA_mobileApp.MainPage">
 
-    <ContentPage x:Name="attendancePage" Title="Attendance" IconImageSource="baseline_assignment_black_36dp.png">
+    <ContentPage x:Name="attendancePage" Title="Attendance" IconImageSource="baseline_assignment_black_36dp.png" BackgroundColor="{AppThemeBinding Dark=Black, Light=White}">
         <ContentPage.Content>
             <StackLayout>
-                <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="4">
+                <Frame BackgroundColor="#2196F3" Padding="34" CornerRadius="4">
                     <Label x:Name="frameMsg" HorizontalTextAlignment="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
                 </Frame>
-                <Label Text="Want to fill in the register?" FontSize="18" Padding="30,10,30,10" />
-                <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" Padding="30,0,30,0" />
+                <Label Text="Want to fill in the register?" FontSize="18" VerticalOptions="End" TextColor="{AppThemeBinding Dark=White, Light=Black}"/>
+                <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" Padding="30,0,30,0" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
                 <Picker x:Name="pickerGroup" Title="Select a Period" />
                 <Button x:Name="btnTakeAttendance" Text="Take Attendance" BorderWidth="1" Clicked="BtnTakeAttendance_Clicked"/>
             </StackLayout>
@@ -45,17 +45,17 @@
             </ListView.ItemTemplate>
         </ListView>
     </ContentPage>
-    <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png">
+    <ContentPage Title="Settings" IconImageSource="baseline_settings_black_36dp.png" BackgroundColor="{AppThemeBinding Dark=Black, Light=White}">
         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-            <Frame BackgroundColor="Orange" Padding="24" CornerRadius="4">
+            <Frame BackgroundColor="Orange" Padding="24" CornerRadius="4" VerticalOptions="Start">
                 <Label Text="Settings" HorizontalOptions="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
             </Frame>
-            <Label Text="Change Password:" FontSize="20" />
+            <Label Text="Change Password:" FontSize="20" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
             <Entry x:Name="entCurrentPasswd" Placeholder="Current Password" IsPassword="True" />
             <Entry x:Name="entNewPasswd" Placeholder="New Password" IsPassword="True" />
             <Entry x:Name="entConfirmPasswd" Placeholder="Confirm New Password" IsPassword="True" />
             <Button Text="Submit Changes" Clicked="BtnChangePasswd_Clicked" />
-            <Label HorizontalOptions="Center" Text="To Log Out altogether, press the button below:" FontSize="18" />
+            <Label HorizontalOptions="Center" Text="To Log Out altogether, press the button below:" FontSize="18" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
             <Button TextColor="Red" Text="Log Out" Clicked="BtnLogOut_Clicked" />
         </StackLayout>
     </ContentPage>

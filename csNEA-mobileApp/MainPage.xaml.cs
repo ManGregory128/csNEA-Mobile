@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace csNEA_mobileApp
         public static SqlConnectionStringBuilder builder { get; set; }
         private bool _isRefreshing = false;
         public static List<int> CurrentPeriods { get; set; }
+        public bool logoutConfrm { get; set; }
         public bool IsRefreshing
         {
             get { return _isRefreshing; }
@@ -42,7 +44,7 @@ namespace csNEA_mobileApp
         }
         public MainPage()
         {
-            
+
             InitializeComponent();
             if (Settings.FirstRun == true)
             {
@@ -60,9 +62,9 @@ namespace csNEA_mobileApp
                 }
                 catch
                 {
-                    ShowErrorMessage();
-                }             
-            }            
+                    ShowErrorMessage(1);
+                }
+            }
             //DateTime localDate = DateTime.Now;
             this.BindingContext = this;
         }
@@ -114,7 +116,7 @@ namespace csNEA_mobileApp
                     connection.Close();
                 }
                 lstFeed.ItemsSource = posts;
-            }            
+            }
         }
 
         private void UpdatePeriods()
@@ -140,8 +142,8 @@ namespace csNEA_mobileApp
                         reader.Close();
                     }
                     connection.Close();
-                }                
-            }            
+                }
+            }
             pickerGroup.ItemsSource = periods;
         }
         private int GetToday()
@@ -170,7 +172,7 @@ namespace csNEA_mobileApp
 
         public void UpdateFrame()
         {
-            frameMsg.Text = "Good morning, " + Settings.CurrentUsername + "!";           
+            frameMsg.Text = "Good morning, " + Settings.CurrentUsername + "!";
         }
 
         async void BtnChangePasswd_Clicked(object sender, EventArgs e)
@@ -179,26 +181,33 @@ namespace csNEA_mobileApp
 
             if (currentPassword == entCurrentPasswd.Text)
             {
-                if (entNewPasswd.Text == entConfirmPasswd.Text)
+                if (entNewPasswd.Text == "" || entConfirmPasswd.Text == "")
                 {
-                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-                    {
-                        String sql = "UPDATE Users SET UserPassword='" + entConfirmPasswd.Text + "' WHERE UserName='" + Settings.CurrentUsername + "';";
-
-                        using (SqlCommand command = new SqlCommand(sql, connection))
-                        {
-                            connection.Open();
-                            command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                    }                    
-                    await DisplayAlert("Success", "Password has been saved.", "OK");
-                    entCurrentPasswd.Text = "";
-                    entNewPasswd.Text = "";
-                    entConfirmPasswd.Text = "";
+                    await DisplayAlert("Alert", "New password cannot be empty.", "OK");
                 }
                 else
-                    await DisplayAlert("Alert", "Passwords Must Match!", "OK");
+                {
+                    if (entNewPasswd.Text == entConfirmPasswd.Text)
+                    {
+                        using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                        {
+                            String sql = "UPDATE Users SET UserPassword='" + entConfirmPasswd.Text + "' WHERE UserName='" + Settings.CurrentUsername + "';";
+
+                            using (SqlCommand command = new SqlCommand(sql, connection))
+                            {
+                                connection.Open();
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                        }
+                        await DisplayAlert("Success", "Password has been saved.", "OK");
+                        entCurrentPasswd.Text = "";
+                        entNewPasswd.Text = "";
+                        entConfirmPasswd.Text = "";
+                    }
+                    else
+                        await DisplayAlert("Alert", "Passwords Must Match!", "OK");
+                }
             }
             else
                 await DisplayAlert("Alert", "The current password is incorrect.", "OK");
@@ -206,12 +215,13 @@ namespace csNEA_mobileApp
 
         private void BtnLogOut_Clicked(object sender, EventArgs e)
         {
-            LogOut();
+            LogOutAsync();            
         }
-        async void LogOut()
+        private async void LogOutAsync()
         {
-            bool answer = await DisplayAlert("CONFIRM", "Are you sure you want to log out?", "Yes", "No");
-            if (answer == true)
+            logoutConfrm = await DisplayAlert("Alert!", "Do you really want to log out?", "Yes", "No");
+
+            if (logoutConfrm == true)
             {
                 String sql = "UPDATE dbo.Users SET IsLoggedIn = 0 WHERE UserName = '" + Settings.CurrentUsername + "';";
                 using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
@@ -223,13 +233,12 @@ namespace csNEA_mobileApp
                         connection.Close();
                     }
                 }
-                await DisplayAlert("Alert", "You have logged out. Restart of application is recommended.", "OK");
+                ShowErrorMessage(2);
                 Settings.FirstRun = true;
-                
                 ShowLogin();
             }
             else
-                await DisplayAlert("Alert", "You have chosen not to log out.", "OK");
+                ShowErrorMessage(3);
         }
         async void BtnTakeAttendance_Clicked(object sender, EventArgs e)
         {
@@ -254,7 +263,7 @@ namespace csNEA_mobileApp
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
-                    day = (int) command.ExecuteScalar();
+                    day = (int)command.ExecuteScalar();
                     connection.Close();
                 }
             }
@@ -270,7 +279,7 @@ namespace csNEA_mobileApp
             string password = "";
             using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
             {
-                String sql = "SELECT UserPassword FROM dbo.Users WHERE UserName = '" + Settings.CurrentUsername +"';";
+                String sql = "SELECT UserPassword FROM dbo.Users WHERE UserName = '" + Settings.CurrentUsername + "';";
 
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
@@ -284,13 +293,18 @@ namespace csNEA_mobileApp
                         reader.Close();
                     }
                     connection.Close();
-                }                
+                }
             }
             return password;
         }
-        async void ShowErrorMessage()
+        async void ShowErrorMessage(int reason)
         {
-            await DisplayAlert("Alert", "Cannot contact the database. Make sure you are connected to a network.", "OK");
-        }
+            if (reason == 1)
+                await DisplayAlert("Alert", "Cannot contact the database. Make sure you are connected to a network.", "OK");
+            else if (reason == 2)
+                await DisplayAlert("Alert", "You have logged out. Restart of application is recommended.", "OK");
+            else if (reason == 3)
+                await DisplayAlert("Alert", "You have chosen not to log out.", "OK");
+        }        
     }
 }
