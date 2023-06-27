@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="ParonApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:ParonApp"
+    xmlns:views="clr-namespace:ParonApp.Views"
+    Shell.FlyoutBehavior="Disabled">
+
+    <ShellItem Route="loginPage">
+        <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
+    </ShellItem>
+    
+    <TabBar>
+        <Tab Route="mainPage" Title="Attendance" Icon="baseline_assignment_black_36dp.png">
+            <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
+        </Tab>
+        <Tab Title="Feed" Icon="baseline_view_day_black_36dp.png">
+            <ShellContent ContentTemplate="{DataTemplate views:FeedPage}" />
+        </Tab>
+        <Tab Title="Settings" Icon="baseline_settings_black_36dp.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
+        </Tab>
+    </TabBar>
+
+    <ShellItem Route="Attendance">
+        <ShellContent ContentTemplate="{DataTemplate local:AttendancePage}" />
+    </ShellItem>
+
+</Shell>

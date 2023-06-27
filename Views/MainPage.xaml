@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ParonApp.Views.MainPage">
+    <StackLayout>
+        <Frame BackgroundColor="#2196F3" Padding="34" CornerRadius="4">
+            <Label x:Name="frameMsg" HorizontalTextAlignment="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+        </Frame>
+        <Label Text="Want to fill in the register?" FontSize="18" VerticalOptions="End" TextColor="{AppThemeBinding Dark=White, Light=Black}"/>
+        <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" Padding="30,0,30,0" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
+        <Picker x:Name="pickerGroup" Title="Select a Period" />
+        <Button x:Name="btnTakeAttendance" Text="Take Attendance" BorderWidth="1" Clicked="BtnTakeAttendance_Clicked"/>
+    </StackLayout>
+</ContentPage>

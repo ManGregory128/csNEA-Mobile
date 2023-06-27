@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ParonApp.Views.FeedPage"
+             Title="FeedPage">
+
+    <ListView x:Name="lstFeed"
+                  ItemsSource="{Binding Path=BindingContext.posts}"
+                  IsVisible="True"
+                  HasUnevenRows="True"
+                  SeparatorColor ="Aqua"
+                  IsPullToRefreshEnabled="True"
+                  RefreshCommand="{Binding RefreshCommand}"
+                  IsRefreshing="{Binding IsRefreshing}">
+        <ListView.Header>
+            <StackLayout>
+                <Frame BackgroundColor="ForestGreen" Padding="24" CornerRadius="4">
+                    <Label Text="Feed" HorizontalOptions="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+                </Frame>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <StackLayout Orientation="Vertical">
+                        <Label Text="{Binding User}" FontSize="Title"></Label>
+                        <Label Text="{Binding DatePosted}" FontSize="Subtitle"></Label>
+                        <Label Text="{Binding PostText}" FontSize="Body"></Label>
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</ContentPage>

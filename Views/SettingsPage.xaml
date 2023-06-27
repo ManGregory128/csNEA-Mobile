@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ParonApp.Views.SettingsPage"
+             Title="SettingsPage">
+    <VerticalStackLayout>
+        <Frame BackgroundColor="Orange" Padding="24" CornerRadius="4" VerticalOptions="Start">
+            <Label Text="Settings" HorizontalOptions="Center" VerticalOptions="EndAndExpand" TextColor="White" FontSize="24" />
+        </Frame>
+        <Label Text="Change Password:" FontSize="20" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
+        <Entry x:Name="entCurrentPasswd" Placeholder="Current Password" IsPassword="True" />
+        <Entry x:Name="entNewPasswd" Placeholder="New Password" IsPassword="True" />
+        <Entry x:Name="entConfirmPasswd" Placeholder="Confirm New Password" IsPassword="True" />
+        <Button Text="Submit Changes" Clicked="BtnChangePasswd_Clicked" />
+        <Label HorizontalOptions="Center" Text="To Log Out altogether, press the button below:" FontSize="18" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
+        <Button TextColor="Red" Text="Log Out" Clicked="BtnLogOut_Clicked" />
+    </VerticalStackLayout>
+</ContentPage>

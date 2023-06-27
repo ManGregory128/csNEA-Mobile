@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ParonApp.AttendancePage"
+             Title="AttendancePage">
+    <ListView x:Name="lstStudents" ItemsSource="{Binding Path=BindingContext.Students}" HorizontalOptions="Center">
+        <ListView.Header>
+            <StackLayout Orientation="Horizontal">
+                <Button x:Name="btnBack" Text="Go Back" Clicked="BtnBack_Clicked"></Button>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <ViewCell.View>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding FirstName}" FontSize="13" />
+                            <Label Text="{Binding LastName}" FontSize="13"/>
+                            <CheckBox IsChecked="{Binding IsPresent}" HorizontalOptions="EndAndExpand"/>
+                        </StackLayout>
+                    </ViewCell.View>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.Footer>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                <Button x:Name="btnSubmit" Text="Submit Register" BorderWidth="1" Clicked="btnSubmit_Clicked"></Button>
+            </StackLayout>
+        </ListView.Footer>
+    </ListView>
+</ContentPage>
