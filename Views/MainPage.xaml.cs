@@ -11,6 +11,7 @@ public partial class MainPage : ContentPage
     private bool _isRefreshing = false;
     public static List<int> CurrentPeriods { get; set; }
     public bool logoutConfrm { get; set; }
+    public string titleText { get; set; }
     public bool IsRefreshing
     {
         get { return _isRefreshing; }
@@ -42,6 +43,7 @@ public partial class MainPage : ContentPage
         if (Preferences.Default.Get("demo", false))
         {
             Preferences.Default.Set("demo", true);
+            UpdateFrame();
         }
         else if (!Preferences.ContainsKey("firstRun") || Preferences.Default.Get("firstRun", false) == true)
         {
@@ -168,7 +170,7 @@ public partial class MainPage : ContentPage
 
     public void UpdateFrame()
     {
-        frameMsg.Text = "Good morning, " + Preferences.Default.Get("CurrentUser", "user") + "!";
+        titleText = "Good morning, " + Preferences.Default.Get("CurrentUser", "user") + "!";
     }
 
     

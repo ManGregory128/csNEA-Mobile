@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="ParonApp.LoginPage"
-             Title="LoginPage">
+             Title="Login">
     
-    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-        <Label Text="Welcome! Please log in."/>
+    <StackLayout VerticalOptions="Center" Margin="20" Spacing="10">
+        <skia:SKLottieView
+            Source="teacher-in-classroom.json"
+            RepeatCount="-1"
+            MaximumHeightRequest="250"
+        />
+        <Label Text="Welcome! Please log in." FontSize="Medium"/>
         <Entry x:Name="entUserName" Placeholder="Username" />
         <Entry x:Name="entPasswd" Placeholder="Password" IsPassword="True" />
         <Entry x:Name="entAddress" Placeholder="Database Address" />

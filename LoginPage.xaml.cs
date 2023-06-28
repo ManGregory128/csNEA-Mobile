@@ -18,7 +18,7 @@ public partial class LoginPage : ContentPage
         }
     }
 
-    private void Button_Clicked(object sender, EventArgs e)
+    private async void Button_Clicked(object sender, EventArgs e)
     {
         bool success = false;
         SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
@@ -26,6 +26,7 @@ public partial class LoginPage : ContentPage
         builder.UserID = "SA";
         builder.Password = entDBPass.Text;
         builder.InitialCatalog = "kiti";
+        builder.TrustServerCertificate = true;
 
         Preferences.Default.Set("DBaddress", entAddress.Text);
         Preferences.Default.Set("DBpassword", entDBPass.Text);
@@ -78,11 +79,12 @@ public partial class LoginPage : ContentPage
                 listOfUsers.Clear();
             }
             else
-                this.Navigation.PopModalAsync();
+                await Shell.Current.GoToAsync("//mainPage");
         }
-        catch
+        catch (Exception ex)
         {
-            ShowMessage(2);
+            await DisplayAlert("Alert", ex.Message, "OK");
+            //ShowMessage(2);
         }
 
     }
