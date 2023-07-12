@@ -28,6 +28,7 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<UserSecretsId>a5711ae8-7311-4a48-b529-8c6b73e83730</UserSecretsId>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
@@ -85,18 +86,27 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Images\baseline_assignment_black_36dp.png" />
-	  <None Remove="Resources\Images\baseline_settings_black_36dp.png" />
-	  <None Remove="Resources\Images\baseline_view_day_black_36dp.png" />
+	  <None Remove="Resources\Images\assignment.svg" />
 	  <None Remove="Resources\Images\school.jpg" />
+	  <None Remove="Resources\Images\settings.svg" />
+	  <None Remove="Resources\Images\teacher.gif" />
+	  <None Remove="Resources\Images\view_day.svg" />
 	  <None Remove="Resources\Raw\teacher-in-classroom.json" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.31.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0-preview.61" />
+		<PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+		<PackageReference Include="System.ServiceModel.Federation" Version="6.0.0" />
+		<PackageReference Include="System.ServiceModel.Http" Version="6.0.0" />
+		<PackageReference Include="System.ServiceModel.NetTcp" Version="6.0.0" />
+		<PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
+		<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -112,6 +122,12 @@
 	  <MauiXaml Update="Views\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Connected Services\" />
+	  <Folder Include="Platforms\Android\Resources\xml\" />
+	  <Folder Include="Repository\" />
 	</ItemGroup>
 
 </Project>

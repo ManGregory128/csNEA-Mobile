@@ -13,6 +13,8 @@ public partial class AppShell : Shell
         InitializeComponent();
         RegisterRoutes();
         BindingContext = this;
+        if (Preferences.Default.Get("loggedIn", false)) ParonAppShell.CurrentItem = homePage;
+        else ParonAppShell.CurrentItem = loginPage;
     }
 
     void RegisterRoutes()

@@ -1,79 +1,88 @@
-using Microsoft.Data.SqlClient;
 
 namespace ParonApp.Views;
 
 public partial class SettingsPage : ContentPage
 {
-	public SettingsPage()
-	{
-		InitializeComponent();
-	}
+    public SettingsPage()
+    {
+        InitializeComponent();
+    }
     async void BtnChangePasswd_Clicked(object sender, EventArgs e)
     {
-        /*
-        string currentPassword = GetPasswordCurrent();
+        string currentPassword = entCurrentPasswd.Text;
 
-        if (currentPassword == entCurrentPasswd.Text)
+        if (entNewPasswd.Text == "" || entConfirmPasswd.Text == "")
         {
-            if (entNewPasswd.Text == "" || entConfirmPasswd.Text == "")
+            await DisplayAlert("Alert", "New password cannot be empty.", "OK");
+        }
+        else
+        {
+            if (entNewPasswd.Text == entConfirmPasswd.Text)
             {
-                await DisplayAlert("Alert", "New password cannot be empty.", "OK");
+                try
+                {
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri("https://api.paron.app/api/User/changePassword/" +
+                        Preferences.Default.Get("CurrentUser", "") + "/" + currentPassword + "/" + entConfirmPasswd.Text);
+                    HttpResponseMessage response = await client.GetAsync("");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string content = response.Content.ReadAsStringAsync().Result;
+                        if (content == "true")
+                        {
+                            await DisplayAlert("Alert", "Password change was successfull.", "OK");
+                        }
+                        else await DisplayAlert("Alert", "Password change was NOT successfull.", "OK");
+
+                    }
+                    else await DisplayAlert("Alert", "Password change was NOT successfull.", "OK");
+                }
+                catch
+                {
+                    await DisplayAlert("Alert", "Password change was NOT successfull.", "OK");
+                }
             }
             else
-            {
-                if (entNewPasswd.Text == entConfirmPasswd.Text)
-                {
-                    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-                    {
-                        String sql = "UPDATE Users SET UserPassword='" + entConfirmPasswd.Text + "' WHERE UserName='" + Preferences.Default.Get("CurrentUser", "user") + "';";
-
-                        using (SqlCommand command = new SqlCommand(sql, connection))
-                        {
-                            connection.Open();
-                            command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-                    }
-                    await DisplayAlert("Success", "Password has been saved.", "OK");
-                    entCurrentPasswd.Text = "";
-                    entNewPasswd.Text = "";
-                    entConfirmPasswd.Text = "";
-                }
-                else
-                    await DisplayAlert("Alert", "Passwords Must Match!", "OK");
-            }
+                await DisplayAlert("Alert", "New password does not match with confirmed new password.", "OK");
         }
-        else
-            await DisplayAlert("Alert", "The current password is incorrect.", "OK");
-        */
     }
-    private void BtnLogOut_Clicked(object sender, EventArgs e)
+    private async void BtnLogOut_Clicked(object sender, EventArgs e)
     {
-        LogOutAsync();
-    }
-    private async void LogOutAsync()
-    {
-        /*
-        logoutConfrm = await DisplayAlert("Alert!", "Do you really want to log out?", "Yes", "No");
-
-        if (logoutConfrm == true)
+        if (await LogOutAsync())
         {
-            String sql = "UPDATE dbo.Users SET IsLoggedIn = 0 WHERE UserName = '" + Preferences.Default.Get("CurrentUser", "user") + "';";
-            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-            {
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                }
-            }
-            ShowErrorMessage(2);
-            Preferences.Set("firstRun", true);
-            ShowLogin();
+            Preferences.Set("loggedIn", false);
+            await Shell.Current.GoToAsync("//loginPage");
         }
-        else
-            ShowErrorMessage(3);
-        */
+    }
+    private async Task<bool> LogOutAsync()
+    {
+        string password = await DisplayPromptAsync("To confirm log out, please enter your password:", "Password");
+        bool logoutConfrm = await DisplayAlert("Alert!", "Do you really want to log out?", "Yes", "No");
+        if (logoutConfrm)
+        {
+            try
+            {
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://api.paron.app/api/User/logoutMobile/" +
+                    Preferences.Default.Get("CurrentUser", "") + "/" + password);
+                HttpResponseMessage response = await client.GetAsync("");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = response.Content.ReadAsStringAsync().Result;
+                    if (content == "true")
+                    {
+                        return true;
+                    }
+                    else return false;
+
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        return false;
     }
 }

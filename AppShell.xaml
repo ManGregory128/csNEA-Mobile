@@ -5,20 +5,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ParonApp"
     xmlns:views="clr-namespace:ParonApp.Views"
+    x:Name="ParonAppShell"
+    xmlns:tabs="http://sharpnado.com"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellItem Route="loginPage">
+    <ShellItem Route="loginPage" x:Name="loginPage">
         <ShellContent ContentTemplate="{DataTemplate local:LoginPage}" />
     </ShellItem>
     
     <TabBar>
-        <Tab Route="mainPage" Title="Attendance" Icon="baseline_assignment_black_36dp.png">
+        <Tab Route="mainPage" x:Name="homePage" Title="Attendance" Icon="assignment.svg">
             <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
         </Tab>
-        <Tab Title="Feed" Icon="baseline_view_day_black_36dp.png">
+        <Tab Title="Feed" Icon="view_day.svg">
             <ShellContent ContentTemplate="{DataTemplate views:FeedPage}" />
         </Tab>
-        <Tab Title="Settings" Icon="baseline_settings_black_36dp.png">
+        <Tab Title="Settings" Icon="settings.svg">
             <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
         </Tab>
     </TabBar>

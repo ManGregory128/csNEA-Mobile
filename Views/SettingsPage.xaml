@@ -3,13 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ParonApp.Views.SettingsPage"
              Title="Settings">
-    <VerticalStackLayout Margin="20">
+    <VerticalStackLayout Margin="20" Spacing="15">
         <Label Text="Change Password:" FontSize="20" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
         <Entry x:Name="entCurrentPasswd" Placeholder="Current Password" IsPassword="True" />
         <Entry x:Name="entNewPasswd" Placeholder="New Password" IsPassword="True" />
         <Entry x:Name="entConfirmPasswd" Placeholder="Confirm New Password" IsPassword="True" />
         <Button Text="Submit Changes" Clicked="BtnChangePasswd_Clicked" />
-        <Label HorizontalOptions="Center" Text="To Log Out altogether, press the button below:" FontSize="18" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
+        <Label HorizontalOptions="Fill" Text="To Log Out altogether, press the button below:" FontSize="16" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
         <Button TextColor="Red" Text="Log Out" Clicked="BtnLogOut_Clicked" />
     </VerticalStackLayout>
 </ContentPage>

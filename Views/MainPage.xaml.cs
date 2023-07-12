@@ -8,33 +8,11 @@ public partial class MainPage : ContentPage
 {
     private ObservableCollection<FeedPost> posts { get; set; }
     public static SqlConnectionStringBuilder builder { get; set; }
-    private bool _isRefreshing = false;
+    
     public static List<int> CurrentPeriods { get; set; }
     public bool logoutConfrm { get; set; }
     public string titleText { get; set; }
-    public bool IsRefreshing
-    {
-        get { return _isRefreshing; }
-        set
-        {
-            _isRefreshing = value;
-            OnPropertyChanged(nameof(IsRefreshing));
-        }
-    }
-    public ICommand RefreshCommand
-    {
-        get
-        {
-            return new Command(() =>
-            {
-                IsRefreshing = true;
-
-                UpdateFeed();
-
-                IsRefreshing = false;
-            });
-        }
-    }
+    
     public MainPage()
     {
 
@@ -45,17 +23,11 @@ public partial class MainPage : ContentPage
             Preferences.Default.Set("demo", true);
             UpdateFrame();
         }
-        else if (!Preferences.ContainsKey("firstRun") || Preferences.Default.Get("firstRun", false) == true)
-        {
-            ShowLogin();
-        }
         else
         {
-            SetDBinfo();
             UpdateFrame();
             try
             {
-                UpdateFeed();
                 UpdatePeriods();
             }
             catch
@@ -73,48 +45,9 @@ public partial class MainPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine("The modal page is dismissed");
             UpdateFrame();
-            UpdateFeed();
             UpdatePeriods();
         };
         await Navigation.PushModalAsync(modalPage);
-    }
-    public static void SetDBinfo()
-    {
-        builder = new SqlConnectionStringBuilder
-        {
-            DataSource = Preferences.Default.Get("DBaddress", "Database Address"),
-            UserID = "SA",
-            Password = Preferences.Default.Get("DBpassword", "Database Password"),
-            InitialCatalog = "kiti"
-        };
-    }
-
-    private void UpdateFeed()
-    {
-        posts = new ObservableCollection<FeedPost>();
-        posts.Clear();
-        FeedPost tempPost;
-        using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-        {
-            String sql = "SELECT Author, DateTimePosted, Post FROM dbo.Feed ORDER BY DateTimePosted DESC;"; //Selecting Only from last week TODO
-
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        //Assigning Posts to the List
-                        tempPost = new FeedPost(reader.GetString(2), reader.GetString(0), reader.GetDateTime(1));
-                        posts.Add(tempPost);
-                    }
-                    reader.Close();
-                }
-                connection.Close();
-            }
-            //lstFeed.ItemsSource = posts;
-        }
     }
 
     private void UpdatePeriods()
