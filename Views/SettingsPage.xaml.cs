@@ -57,30 +57,33 @@ public partial class SettingsPage : ContentPage
     private async Task<bool> LogOutAsync()
     {
         string password = await DisplayPromptAsync("To confirm log out, please enter your password:", "Password");
-        bool logoutConfrm = await DisplayAlert("Alert!", "Do you really want to log out?", "Yes", "No");
-        if (logoutConfrm)
+        if (password != null)
         {
-            try
+            bool logoutConfrm = await DisplayAlert("Alert!", "Do you really want to log out?", "Yes", "No");
+            if (logoutConfrm)
             {
-                var client = new HttpClient();
-                client.BaseAddress = new Uri("https://api.paron.app/api/User/logoutMobile/" +
-                    Preferences.Default.Get("CurrentUser", "") + "/" + password);
-                HttpResponseMessage response = await client.GetAsync("");
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    string content = response.Content.ReadAsStringAsync().Result;
-                    if (content == "true")
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri("https://api.paron.app/api/User/logoutMobile/" +
+                        Preferences.Default.Get("CurrentUser", "") + "/" + password);
+                    HttpResponseMessage response = await client.GetAsync("");
+                    if (response.IsSuccessStatusCode)
                     {
-                        return true;
-                    }
-                    else return false;
+                        string content = response.Content.ReadAsStringAsync().Result;
+                        if (content == "true")
+                        {
+                            return true;
+                        }
+                        else return false;
 
+                    }
+                    return false;
                 }
-                return false;
-            }
-            catch
-            {
-                return false;
+                catch
+                {
+                    return false;
+                }
             }
         }
         return false;

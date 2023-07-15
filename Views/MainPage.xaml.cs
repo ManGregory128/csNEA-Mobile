@@ -144,29 +144,7 @@ public partial class MainPage : ContentPage
         else
             return false;
     }
-    private string GetPasswordCurrent()
-    {
-        string password = "";
-        using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
-        {
-            String sql = "SELECT UserPassword FROM dbo.Users WHERE UserName = '" + Preferences.Default.Get("CurrentUser", "user") + "';";
-
-            using (SqlCommand command = new SqlCommand(sql, connection))
-            {
-                connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        password = reader.GetString(0);
-                    }
-                    reader.Close();
-                }
-                connection.Close();
-            }
-        }
-        return password;
-    }
+    
     async void ShowErrorMessage(int reason)
     {
         if (reason == 1)

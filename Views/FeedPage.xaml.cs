@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -7,11 +7,12 @@ namespace ParonApp.Views;
 public partial class FeedPage : ContentPage
 {
     private bool _isRefreshing = false;
-    ObservableCollection<FeedPost> posts;
+    ObservableCollection<FeedPost> Posts;
     public FeedPage()
 	{
 		InitializeComponent();
-        //if (posts.Count == 0) UpdateFeed();
+        BindingContext = this;
+        if (Posts == null) UpdateFeed();
 	}
     public bool IsRefreshing
     {
@@ -36,30 +37,25 @@ public partial class FeedPage : ContentPage
             });
         }
     }
-    private void UpdateFeed()
+    private async void UpdateFeed()
     {
-        posts = new ObservableCollection<FeedPost>();
-        FeedPost tempPost;
-        using (SqlConnection connection = new SqlConnection(""))
+        Posts = new ObservableCollection<FeedPost>();
+        
+        try
         {
-            String sql = "SELECT Author, DateTimePosted, Post FROM dbo.Feed ORDER BY DateTimePosted DESC;"; //Selecting Only from last week TODO
-
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://api.paron.app/api/FeedPost/");
+            HttpResponseMessage response = await client.GetAsync("");
+            if (response.IsSuccessStatusCode)
             {
-                connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        //Assigning Posts to the List
-                        tempPost = new FeedPost(reader.GetString(2), reader.GetString(0), reader.GetDateTime(1));
-                        posts.Add(tempPost);
-                    }
-                    reader.Close();
-                }
-                connection.Close();
+                string content = response.Content.ReadAsStringAsync().Result;
+                Posts = JsonConvert.DeserializeObject<ObservableCollection<FeedPost>>(content);
+                lstFeed.ItemsSource = Posts;
             }
-            //lstFeed.ItemsSource = posts;
+        }
+        catch
+        {
+            await DisplayAlert("Alert", "Cannot fetch the Feed. Make sure you are connected to a network.", "OK");
         }
     }
 }

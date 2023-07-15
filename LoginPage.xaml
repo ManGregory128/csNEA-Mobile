@@ -11,8 +11,8 @@
             IsAnimationPlaying="True"
         />
         <Label Text="Welcome! Please log in." FontSize="Medium"/>
-        <Entry x:Name="entUserName" Placeholder="Username" />
-        <Entry x:Name="entPasswd" Placeholder="Password" IsPassword="True" />
+        <Entry x:Name="entUserName" Placeholder="Username" PlaceholderColor="Gray" TextColor="{AppThemeBinding Light=#1b1b1f, Dark=White}"/>
+        <Entry x:Name="entPasswd" Placeholder="Password" PlaceholderColor="Gray" TextColor="{AppThemeBinding Light=#1b1b1f, Dark=White}" IsPassword="True" />
         <Button Text="Log In" Clicked="Button_Clicked"/>
         <Button x:Name="btnDemo" Text="Demo - Offline" Clicked="btnDemo_Clicked"/>
         <ActivityIndicator x:Name="activityIndicator" IsRunning="False" />

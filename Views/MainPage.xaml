@@ -6,8 +6,8 @@
 
     <StackLayout Spacing="15" Margin="20" VerticalOptions="Center">
         <Label Text="Want to fill in the register?" FontSize="18" VerticalOptions="End" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
-        <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" Padding="30,0,30,0" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
-        <Picker x:Name="pickerGroup" Title="Select a Period" />
+        <Label Text="Select a period from the list and press the button below to take attendances:" FontSize="16" TextColor="{AppThemeBinding Dark=White, Light=Black}" />
+        <Picker x:Name="pickerGroup" Title="Select a Period" TitleColor="Gray"/>
         <Button x:Name="btnTakeAttendance" Text="Take Attendance" BorderWidth="1" Clicked="BtnTakeAttendance_Clicked" />
     </StackLayout>
 </ContentPage>

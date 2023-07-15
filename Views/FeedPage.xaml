@@ -5,20 +5,45 @@
              Title="Feed">
 
     <ListView x:Name="lstFeed"
-                  ItemsSource="{Binding Path=BindingContext.posts}"
                   IsVisible="True"
                   HasUnevenRows="True"
                   IsPullToRefreshEnabled="True"
                   RefreshCommand="{Binding RefreshCommand}"
-                  IsRefreshing="{Binding IsRefreshing}">
+                  IsRefreshing="{Binding IsRefreshing}"
+                  SelectionMode="None">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
-                    <StackLayout Orientation="Vertical">
-                        <Label Text="{Binding User}" FontSize="Title"></Label>
-                        <Label Text="{Binding DatePosted}" FontSize="Subtitle"></Label>
-                        <Label Text="{Binding PostText}" FontSize="Body"></Label>
-                    </StackLayout>
+                    <Grid Margin="15,15,15,15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="{Binding UserName}"
+                               FontSize="Subtitle"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalOptions="Start"/>
+
+                        <Label Text="{Binding DateTimePosted}"
+                               FontSize="Subtitle"
+                               Grid.Row="0"
+                               Grid.Column="1"
+                               HorizontalOptions="End"/>
+
+                        <Label Text="{Binding PostText}"
+                               FontSize="Medium"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               Grid.ColumnSpan="2"
+                               Margin="0, 8"
+                               LineBreakMode="WordWrap"/>
+                    </Grid>
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>

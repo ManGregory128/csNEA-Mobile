@@ -8,14 +8,14 @@ namespace ParonApp
 {
     internal class FeedPost
     {
-        public FeedPost(string postText, string user, DateTime datePosted)
+        public FeedPost(string postText, string username, DateTime dateTimePosted)
         {
             PostText = postText;
-            User = user;
-            DatePosted = datePosted;
+            UserName = username;
+            DateTimePosted = dateTimePosted;
         }
         public string PostText { get; set; }
-        public DateTime DatePosted { get; set; }
-        public string User { get; set; }
+        public DateTime DateTimePosted { get; set; }
+        public string UserName { get; set; }
     }
 }

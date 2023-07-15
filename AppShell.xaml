@@ -14,13 +14,13 @@
     </ShellItem>
     
     <TabBar>
-        <Tab Route="mainPage" x:Name="homePage" Title="Attendance" Icon="assignment.svg">
+        <Tab Route="mainPage" x:Name="homePage" Title="Attendance" Icon="assignment.png">
             <ShellContent ContentTemplate="{DataTemplate views:MainPage}" />
         </Tab>
-        <Tab Title="Feed" Icon="view_day.svg">
+        <Tab Title="Feed" Icon="view_day.png">
             <ShellContent ContentTemplate="{DataTemplate views:FeedPage}" />
         </Tab>
-        <Tab Title="Settings" Icon="settings.svg">
+        <Tab Title="Settings" Icon="settings.png">
             <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
         </Tab>
     </TabBar>
